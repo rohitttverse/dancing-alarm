@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dancing Clock 💃</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-icon">🕺</span>
+        <div>
+          <h1>Dancing Clock</h1>
+          <p>Alarm band karna hai? Pehle dance karo. 💃</p>
+        </div>
+      </div>
+      <div class="live-pill"><span class="dot"></span> LIVE</div>
+    </header>
+
+    <main class="grid">
+      <section class="card clock-card">
+        <div class="clock-face" id="clockFace">
+          <div class="tick tick-12"></div>
+          <div class="tick tick-3"></div>
+          <div class="tick tick-6"></div>
+          <div class="tick tick-9"></div>
+          <div class="hand hour" id="hourHand"></div>
+          <div class="hand minute" id="minuteHand"></div>
+          <div class="hand second" id="secondHand"></div>
+          <div class="hand-pin"></div>
+        </div>
+        <div class="digital" id="digitalClock">00:00:00</div>
+        <div class="date" id="todayDate"></div>
+        <div class="beat">
+          <span class="beat-bar"></span><span class="beat-bar"></span><span class="beat-bar"></span><span class="beat-bar"></span>
+          <span>Beat chal raha hai…</span>
+        </div>
+      </section>
+
+      <section class="card alarm-card">
+        <h2>⏰ Alarm set karo</h2>
+        <form id="alarmForm" class="alarm-form">
+          <label>
+            <span>Time</span>
+            <input type="time" id="alarmTime" required />
+          </label>
+          <label>
+            <span>Label (optional)</span>
+            <input type="text" id="alarmLabel" maxlength="40" placeholder="Jaise: Uth ja, dance kar!" />
+          </label>
+          <button type="submit" class="primary" id="setBtn">Alarm set karo 🚀</button>
+        </form>
+
+        <div class="alarm-panel">
+          <div class="status" id="alarmStatus" aria-live="polite">Abhi koi alarm set nahi hai.</div>
+          <div class="countdown" id="countdown">--:--:--</div>
+          <div class="panel-actions">
+            <button type="button" class="ghost" id="cancelBtn" hidden>Alarm cancel karo ❌</button>
+            <button type="button" class="ghost" id="testSoundBtn">Ringtone test karo 🔊</button>
+          </div>
+        </div>
+
+        <div class="rules">
+          <p><b>Rules:</b></p>
+          <ol>
+            <li>Alarm bajega to pura screen dance mode me aa jayega.</li>
+            <li>Direct band karne ka button <b>nahi</b> hoga.</li>
+            <li>3 steps: 💃 dance → 👏 2 baar taali → 🗣️ "hello" bolo. Tabhi alarm band!</li>
+          </ol>
+        </div>
+      </section>
+    </main>
+
+    <p class="tip">Camera access browser me allow karna padega (localhost ya HTTPS par chalao). Tab khuli rehni chahiye.</p>
+  </div>
+
+  <div class="ring-overlay" id="ringOverlay" hidden>
+    <div class="ring-panel">
+      <div class="ring-badge">🔔 ALARM BAJ RAHA HAI</div>
+      <h2 class="ring-title" id="ringLabel">WAKE UP! 💃</h2>
+      <p class="ring-sub">Direct off nahi hoga — <b>3 steps</b> pooré karo tabhi band hoga! 🕺</p>
+
+      <ol class="steps" id="stepsList">
+        <li class="active">
+          <span class="step-no">1</span><span class="step-icon">💃</span>
+          <span class="step-label">Camera ke samne dance karo</span><span class="step-check"></span>
+        </li>
+        <li>
+          <span class="step-no">2</span><span class="step-icon">👏</span>
+          <span class="step-label">2 baar taali maro</span><span class="step-check"></span>
+        </li>
+        <li>
+          <span class="step-no">3</span><span class="step-icon">🗣️</span>
+          <span class="step-label">"Hello" bolo</span><span class="step-check"></span>
+        </li>
+      </ol>
+
+      <div class="camera-wrap" id="cameraWrap">
+        <video id="danceCamera" autoplay playsinline muted></video>
+        <div class="camera-message" id="cameraMessage" hidden>Camera band hai</div>
+        <div class="camera-tag" id="cameraTag">📷 CAMERA ON</div>
+      </div>
+
+      <div class="energy">
+        <div class="energy-head">
+          <span id="stepTitle">Dance energy ⚡</span>
+          <span id="energyPercent">0%</span>
+        </div>
+        <div class="energy-track"><div class="energy-fill" id="energyFill"></div></div>
+        <p class="dance-hint" id="danceHint" aria-live="polite">Camera ke samne hilo — 3 second tak movement rakho.</p>
+      </div>
+
+      <div class="ring-actions">
+        <button type="button" class="ghost light" id="retryCameraBtn" hidden>Camera dobara try karo 📷</button>
+        <button type="button" class="ghost light" id="useMicBtn" hidden>Mic se try karo 🎤</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" hidden></div>
+
+  <script src="motion.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
