@@ -58,6 +58,14 @@ Then open **http://127.0.0.1:8000** (use `127.0.0.1` instead of `localhost` to a
 
 To change the steps, edit `startStep(index)` in `app.js` and `#stepsList` in `index.html` — adding a new step is straightforward.
 
-## Later: mobile app
+## Mobile app (React Native + Expo)
 
-The detection logic is isolated in `motion.js`, so the same "level → energy → dismiss" pattern can be ported to React Native / Flutter. On mobile, use camera frame-diff or an accelerometer to produce the same level; the alarm/ringtone logic in `app.js` can be replaced with the native UI layer.
+A native version lives in [`mobile/`](mobile/README.md). It uses Expo Router, accelerometer shake detection, microphone clap/voice detection, multiple alarms, local notifications, offline storage, and XP/streak gamification.
+
+```bash
+cd mobile
+npm install
+npx expo start
+```
+
+Use `npx expo run:android` (or a development build) for full microphone + notification support. See `mobile/README.md` for details.
