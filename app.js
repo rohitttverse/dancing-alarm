@@ -107,7 +107,7 @@
     var now = new Date();
     var h = now.getHours(), m = now.getMinutes(), s = now.getSeconds(), ms = now.getMilliseconds();
     els.digital.textContent = pad(h) + ':' + pad(m) + ':' + pad(s);
-    els.date.textContent = new Intl.DateTimeFormat('hi-IN', {
+    els.date.textContent = new Intl.DateTimeFormat('en-US', {
       weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
     }).format(now);
     els.hourHand.style.transform = 'rotate(' + ((h % 12) * 30 + m * 0.5) + 'deg)';
@@ -127,13 +127,13 @@
 
   function renderAlarmStatus() {
     if (!state.target) {
-      els.status.textContent = 'Abhi koi alarm set nahi hai.';
+      els.status.textContent = 'No alarm set yet.';
       els.cancelBtn.hidden = true;
       return;
     }
     var time = new Date(state.target);
-    var when = time.toLocaleDateString('hi-IN', { weekday: 'short', day: 'numeric', month: 'short' });
-    els.status.textContent = 'Alarm chalu hai: ' + pad(time.getHours()) + ':' + pad(time.getMinutes()) +
+    var when = time.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short' });
+    els.status.textContent = 'Alarm active: ' + pad(time.getHours()) + ':' + pad(time.getMinutes()) +
       ' (' + when + ')' + (state.label ? ' — ' + state.label : '');
     els.cancelBtn.hidden = false;
   }
@@ -241,21 +241,21 @@
       els.retryBtn.hidden = false;
       els.micBtn.hidden = true;
     } else {
-      showMicError('Camera / mic block ho gaya');
+      showMicError('Camera / microphone blocked');
     }
   }
 
   function showMicError(message) {
     els.video.hidden = true;
     els.cameraMessage.hidden = false;
-    els.cameraMessage.textContent = message || 'Mic access nahi mila';
+    els.cameraMessage.textContent = message || 'Microphone access denied';
     els.cameraTag.textContent = '🚫 SENSOR OFF';
-    els.hint.textContent = 'Browser me mic permission allow karein, phir retry karo.';
+    els.hint.textContent = 'Allow microphone access in your browser, then retry.';
     els.retryBtn.hidden = false;
     els.micBtn.hidden = true;
   }
 
-  /* Step 1: camera se movement — purana dance detector. */
+  /* Step 1: movement detection with the camera. */
   function startDetection(options) {
     state.lastEnergyTick = 0;
     updateEnergyUI();
@@ -288,8 +288,8 @@
     updateEnergyUI();
     persistRinging();
     els.hint.textContent = state.claps >= CLAPS_REQUIRED
-      ? 'Shabash! Agla step: "hello" bolo 🗣️'
-      : 'Ek taali aur maro (' + state.claps + '/' + CLAPS_REQUIRED + ') 👏';
+      ? 'Nice! Next step: say "hello" 🗣️'
+      : 'One more clap (' + state.claps + '/' + CLAPS_REQUIRED + ') 👏';
     if (state.claps >= CLAPS_REQUIRED) setTimeout(completeStep, 400);
   }
 
@@ -298,7 +298,7 @@
     state.helloProgress = 1;
     updateEnergyUI();
     persistRinging();
-    els.hint.textContent = 'Hello mil gaya! 🎉';
+    els.hint.textContent = 'Hello detected! 🎉';
     setTimeout(dismissAlarm, 400);
   }
 
@@ -314,7 +314,7 @@
 
     if (index === STEP_DANCE) {
       els.stepTitle.textContent = 'Dance energy ⚡';
-      els.hint.textContent = 'Camera ke samne ~3 second hilo — step 1/3 💃';
+      els.hint.textContent = 'Move in front of the camera for ~3 seconds — step 1/3 💃';
       startDetection();
       return;
     }
@@ -325,8 +325,8 @@
     els.cameraTag.textContent = '🎤 MIC ON';
 
     if (index === STEP_CLAP) {
-      els.stepTitle.textContent = 'Taali count 👏';
-      els.hint.textContent = '2 baar taali maro (' + state.claps + '/' + CLAPS_REQUIRED + ') — step 2/3';
+      els.stepTitle.textContent = 'Clap count 👏';
+      els.hint.textContent = 'Clap twice (' + state.claps + '/' + CLAPS_REQUIRED + ') — step 2/3';
       var clapMonitor = new MicMonitor('clap');
       state.clapMonitor = clapMonitor;
       clapMonitor.start(onClap).then(function (ok) {
@@ -336,12 +336,12 @@
     }
 
     els.stepTitle.textContent = 'Hello check 🗣️';
-    els.hint.textContent = '"Hello" bolo — main sun raha hoon! (step 3/3)';
+    els.hint.textContent = 'Say "hello" — I am listening! (step 3/3)';
     var speech = new SpeechDetector();
     state.speech = speech;
     var speechOk = false;
     try { speechOk = speech.start(onHello); } catch (e) { speechOk = false; }
-    if (!speechOk) els.hint.textContent = 'Speech support nahi — "hello" zor se bolo 🎤';
+    if (!speechOk) els.hint.textContent = 'Speech recognition unavailable — say "hello" loudly 🎤';
 
     var voiceMonitor = new MicMonitor('voice');
     state.voiceMonitor = voiceMonitor;
@@ -362,7 +362,7 @@
       return;
     }
     var next = state.stepIndex + 1;
-    showToast(next === STEP_CLAP ? 'Step 1 done! Ab 2 taali maro 👏' : 'Taali done! Ab "hello" bolo 🗣️');
+    showToast(next === STEP_CLAP ? 'Step 1 done! Now clap twice 👏' : 'Claps done! Now say "hello" 🗣️');
     persistRinging();
     startStep(next);
   }
@@ -386,7 +386,7 @@
 
     if (restored) {
       // Browsers block autoplay after reload; first click/tap starts the sound.
-      els.hint.textContent = 'Sound ke liye ek baar click/tap karo, phir steps follow karo! 💃';
+      els.hint.textContent = 'Click or tap once to enable sound, then follow the steps! 💃';
     } else {
       startRingtone();
     }
@@ -401,7 +401,7 @@
     els.overlay.hidden = true;
     try { localStorage.removeItem(RING_KEY); } catch (e) {}
     clearAlarm();
-    showToast('🎉 Alarm band! Sab 3 steps complete — reward mil gaya.');
+    showToast('🎉 Alarm off! All 3 steps complete — reward unlocked.');
   }
 
   els.form.addEventListener('submit', function (event) {
@@ -421,12 +421,12 @@
     saveAlarm();
     renderAlarmStatus();
     unlockAudio(); // user gesture unlocks sound for later
-    showToast('Alarm set ho gaya! 3 steps: dance → taali → hello 💃');
+    showToast('Alarm set! 3 steps: dance → clap → hello 💃');
   });
 
   els.cancelBtn.addEventListener('click', function () {
     clearAlarm();
-    showToast('Alarm cancel kar diya.');
+    showToast('Alarm cancelled.');
   });
 
   els.testBtn.addEventListener('click', function () {
@@ -454,20 +454,20 @@
   updateClock();
   setInterval(updateClock, 200);
 
-  // Reload karne par bhi alarm wapas aa jayega — 3 steps karke hi band hoga.
+  // Reload cannot bypass the alarm; it comes back with the saved progress.
   if (loadRinging()) {
     ring(true);
-    showToast('Alarm abhi bhi chal raha hai! Steps follow karo. 💃');
+    showToast('Alarm is still ringing! Follow the steps. 💃');
   }
 
-  // Tab close/reload par browser ka apna confirmation prompt dikhao.
+  // Ask the browser to show its confirmation prompt before closing/reloading.
   window.addEventListener('beforeunload', function (event) {
     if (!state.ringing) return;
     event.preventDefault();
     event.returnValue = '';
   });
 
-  // Reload ke baad sound autoplay block hota hai — pehle gesture par chalao.
+  // Browsers block autoplay after reload — resume sound on the first gesture.
   function resumeSoundOnGesture() {
     if (!state.ringing) return;
     unlockAudio();

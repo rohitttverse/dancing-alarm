@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -13,7 +13,7 @@
         <span class="brand-icon">🕺</span>
         <div>
           <h1>Dancing Clock</h1>
-          <p>Alarm band karna hai? Pehle dance karo. 💃</p>
+          <p>Want to stop the alarm? Dance first. 💃</p>
         </div>
       </div>
       <div class="live-pill"><span class="dot"></span> LIVE</div>
@@ -35,12 +35,12 @@
         <div class="date" id="todayDate"></div>
         <div class="beat">
           <span class="beat-bar"></span><span class="beat-bar"></span><span class="beat-bar"></span><span class="beat-bar"></span>
-          <span>Beat chal raha hai…</span>
+          <span>Beat is playing…</span>
         </div>
       </section>
 
       <section class="card alarm-card">
-        <h2>⏰ Alarm set karo</h2>
+        <h2>⏰ Set an alarm</h2>
         <form id="alarmForm" class="alarm-form">
           <label>
             <span>Time</span>
@@ -48,58 +48,58 @@
           </label>
           <label>
             <span>Label (optional)</span>
-            <input type="text" id="alarmLabel" maxlength="40" placeholder="Jaise: Uth ja, dance kar!" />
+            <input type="text" id="alarmLabel" maxlength="40" placeholder="e.g.: Wake up, dance!" />
           </label>
-          <button type="submit" class="primary" id="setBtn">Alarm set karo 🚀</button>
+          <button type="submit" class="primary" id="setBtn">Set alarm 🚀</button>
         </form>
 
         <div class="alarm-panel">
-          <div class="status" id="alarmStatus" aria-live="polite">Abhi koi alarm set nahi hai.</div>
+          <div class="status" id="alarmStatus" aria-live="polite">No alarm set yet.</div>
           <div class="countdown" id="countdown">--:--:--</div>
           <div class="panel-actions">
-            <button type="button" class="ghost" id="cancelBtn" hidden>Alarm cancel karo ❌</button>
-            <button type="button" class="ghost" id="testSoundBtn">Ringtone test karo 🔊</button>
+            <button type="button" class="ghost" id="cancelBtn" hidden>Cancel alarm ❌</button>
+            <button type="button" class="ghost" id="testSoundBtn">Test ringtone 🔊</button>
           </div>
         </div>
 
         <div class="rules">
           <p><b>Rules:</b></p>
           <ol>
-            <li>Alarm bajega to pura screen dance mode me aa jayega.</li>
-            <li>Direct band karne ka button <b>nahi</b> hoga.</li>
-            <li>3 steps: 💃 dance → 👏 2 baar taali → 🗣️ "hello" bolo. Tabhi alarm band!</li>
+            <li>When the alarm rings, the full screen switches to challenge mode.</li>
+            <li>There is <b>no</b> direct off button.</li>
+            <li>3 steps: 💃 dance → 👏 clap twice → 🗣️ say "hello". Only then will the alarm stop!</li>
           </ol>
         </div>
       </section>
     </main>
 
-    <p class="tip">Camera access browser me allow karna padega (localhost ya HTTPS par chalao). Tab khuli rehni chahiye.</p>
+    <p class="tip">Allow camera access in your browser (run on localhost or HTTPS). Keep the tab open.</p>
   </div>
 
   <div class="ring-overlay" id="ringOverlay" hidden>
     <div class="ring-panel">
-      <div class="ring-badge">🔔 ALARM BAJ RAHA HAI</div>
+      <div class="ring-badge">🔔 ALARM RINGING</div>
       <h2 class="ring-title" id="ringLabel">WAKE UP! 💃</h2>
-      <p class="ring-sub">Direct off nahi hoga — <b>3 steps</b> pooré karo tabhi band hoga! 🕺</p>
+      <p class="ring-sub">No direct off — complete <b>3 steps</b> to stop it! 🕺</p>
 
       <ol class="steps" id="stepsList">
         <li class="active">
           <span class="step-no">1</span><span class="step-icon">💃</span>
-          <span class="step-label">Camera ke samne dance karo</span><span class="step-check"></span>
+          <span class="step-label">Dance in front of the camera</span><span class="step-check"></span>
         </li>
         <li>
           <span class="step-no">2</span><span class="step-icon">👏</span>
-          <span class="step-label">2 baar taali maro</span><span class="step-check"></span>
+          <span class="step-label">Clap twice</span><span class="step-check"></span>
         </li>
         <li>
           <span class="step-no">3</span><span class="step-icon">🗣️</span>
-          <span class="step-label">"Hello" bolo</span><span class="step-check"></span>
+          <span class="step-label">Say "hello"</span><span class="step-check"></span>
         </li>
       </ol>
 
       <div class="camera-wrap" id="cameraWrap">
         <video id="danceCamera" autoplay playsinline muted></video>
-        <div class="camera-message" id="cameraMessage" hidden>Camera band hai</div>
+        <div class="camera-message" id="cameraMessage" hidden>Camera off</div>
         <div class="camera-tag" id="cameraTag">📷 CAMERA ON</div>
       </div>
 
@@ -109,12 +109,12 @@
           <span id="energyPercent">0%</span>
         </div>
         <div class="energy-track"><div class="energy-fill" id="energyFill"></div></div>
-        <p class="dance-hint" id="danceHint" aria-live="polite">Camera ke samne hilo — 3 second tak movement rakho.</p>
+        <p class="dance-hint" id="danceHint" aria-live="polite">Move in front of the camera — keep moving for 3 seconds.</p>
       </div>
 
       <div class="ring-actions">
-        <button type="button" class="ghost light" id="retryCameraBtn" hidden>Camera dobara try karo 📷</button>
-        <button type="button" class="ghost light" id="useMicBtn" hidden>Mic se try karo 🎤</button>
+        <button type="button" class="ghost light" id="retryCameraBtn" hidden>Retry camera 📷</button>
+        <button type="button" class="ghost light" id="useMicBtn" hidden>Use microphone 🎤</button>
       </div>
     </div>
   </div>

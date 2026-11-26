@@ -1,63 +1,63 @@
 # Dancing Clock 💃🕺
 
-Ek web alarm clock jise **directly band nahi kar sakte** — alarm rokne ke liye 3 steps pooré karne padte hain:
+A web alarm clock that **cannot be turned off directly** — you must complete 3 steps to stop it:
 
-1. 💃 **Dance** — camera ke samne ~3 second movement
-2. 👏 **Taali** — mic se 2 baar taali detect
-3. 🗣️ **Hello** — Web Speech API se "hello" bola detect (support na ho to zor ki awaaz se fallback)
+1. 💃 **Dance** — about 3 seconds of movement in front of the camera
+2. 👏 **Clap** — two claps detected by the microphone
+3. 🗣️ **Hello** — say "hello", detected with the Web Speech API (falls back to loud voice if unsupported)
 
-## Kaise chalayein
+## How to run
 
-Camera access ke liye browser ko **secure context** chahiye, isliye `index.html` par direct double-click karne se better localhost server use karein:
+The browser needs a **secure context** for camera access, so use a local server instead of opening `index.html` directly.
 
-**Sabse aasan:** `start.bat` par double-click karein — server aur browser apne aap chal jayenge.
+**Easiest:** double-click `start.bat` — it starts the server and opens the browser for you.
 
-Ya manually:
+Or manually:
 
 ```bash
 cd "C:\Users\aman\Desktop\dancing clock"
 python -m http.server 8000 --bind 127.0.0.1
 ```
 
-Phir browser me kholein: **http://127.0.0.1:8000** (`localhost` ki jagah `127.0.0.1` use karein — IPv6 me phansne se bachat hogi).
+Then open **http://127.0.0.1:8000** (use `127.0.0.1` instead of `localhost` to avoid IPv6 issues).
 
-> Agar "site can't be reached" / reload wala screen aaye to matlab server nahi chal raha — `start.bat` chalayein ya upar wala command dobara run karein. Port 8000 busy ho to command me `8001` badal kar URL bhi `http://127.0.0.1:8001` kar dein.
+> If you see "site can't be reached" or a reload screen, the server is not running — run `start.bat` or the command above again. If port 8000 is busy, change it to `8001` in both the command and the URL.
 
-(VS Code ka "Live Server" extension bhi chalega.)
+(VS Code's "Live Server" extension works too.)
 
-> Tab khuli rehni chahiye — band kar diya to browser alarm nahi baja sakta.
+> Keep the tab open — the browser cannot sound the alarm if the tab is closed.
 
 ## Flow
 
-1. Time aur optional label dekar **Alarm set karo** dabayein.
-2. Browser tab khula rahe. Alarm time par ringtone + vibration shuru.
-3. Full-screen challenge mode aata hai — yahan **koi off/snooze button nahi** hai.
-4. **Step 1:** Camera frame-difference se movement detect hoti hai (~3 sec). Poora hote hi step 2 active.
-5. **Step 2:** Mic se 2 baar taali detect hoti hai (sharp high-frequency spikes).
-6. **Step 3:** Web Speech API se "hello" suna jata hai. Speech support na ho to 80-400 Hz voice band se fallback.
-7. Camera permission na mile to step 1 automatically mic fallback par chal jata hai. Mic na mile to retry buttons dikhte hain. Chrome/Edge me speech recognition best chaleta hai.
-8. **Reload se bachne se bachao:** ring state aur dance progress `localStorage` me save hota hai. Reload karne par alarm wapas aa jayega (sound ke liye ek baar click karna padega), aur tab close/reload par browser ka confirmation prompt dikhega. Browser ka reload button remove karna technically possible nahi hai — lekin reload karne ka koi fayda nahi. Storage manually clear karne se ye protection khatam ho jayegi.
+1. Enter a time and an optional label, then click **Set alarm**.
+2. Keep the browser tab open. At the alarm time, the ringtone + vibration start.
+3. A full-screen challenge appears — there is **no off/snooze button**.
+4. **Step 1:** camera frame-difference detects movement (~3 seconds). Step 2 activates automatically.
+5. **Step 2:** microphone detects two sharp claps.
+6. **Step 3:** Web Speech API listens for "hello". If speech recognition is unavailable, an 80–400 Hz voice-band detector is used as a fallback.
+7. If camera permission is denied, step 1 automatically falls back to the microphone. If the mic is unavailable, retry buttons appear. Chrome/Edge give the best speech recognition support.
+8. **Reload protection:** ring state and progress are saved in `localStorage`. After a reload the alarm comes back (click once to re-enable sound), and the browser shows a confirmation prompt before closing/reloading the tab. Browsers do not allow removing the native reload button — but reloading no longer helps. Manually clearing site storage removes this protection.
 
 ## Files
 
-| File | Kaam |
+| File | Purpose |
 | --- | --- |
-| `index.html` | Clock, alarm form aur ring overlay UI |
-| `styles.css` | Neon dance theme aur animations |
+| `index.html` | Clock, alarm form, and ring overlay UI |
+| `styles.css` | Neon dance theme and animations |
 | `motion.js` | Detection engine: `MotionDetector` (camera frame-diff), `MicMonitor` (clap/voice), `SpeechDetector` ("hello") |
-| `app.js` | Alarm scheduling, countdown, Web Audio ringtone, 3-step challenge + reload protection |
+| `app.js` | Alarm scheduling, countdown, Web Audio ringtone, 3-step challenge, reload protection |
 
 ## Tuning
 
-- `app.js` me `REQUIRED_ENERGY = 3` → dance karne ka required time (seconds).
-- `app.js` me `level > 0.2` threshold → kitni movement "dance" maani jayegi.
-- `motion.js` me `(meanDiff - 2) / 14` → camera sensitivity (kam number = zyada sensitive).
-- `app.js` me `CLAPS_REQUIRED = 2` → kitni taaliyan chahiye.
-- `motion.js` me clap threshold (`0.13`, `baseline * 2.1`) → taali sensitivity.
-- `app.js` me `MELODY` → apni ringtone ke notes.
+- `app.js` → `REQUIRED_ENERGY = 3`: required movement time in seconds.
+- `app.js` → `level > 0.2`: how much movement counts as dancing.
+- `motion.js` → `(meanDiff - 2) / 14`: camera sensitivity (lower number = more sensitive).
+- `app.js` → `CLAPS_REQUIRED = 2`: number of claps required.
+- `motion.js` → clap thresholds (`0.13`, `baseline * 2.1`): clap sensitivity.
+- `app.js` → `MELODY`: ringtone notes.
 
-Steps badalna ho to `app.js` me `startStep(index)` aur `index.html` me `#stepsList` edit karein — naya step add karna easy hai.
+To change the steps, edit `startStep(index)` in `app.js` and `#stepsList` in `index.html` — adding a new step is straightforward.
 
-## Baad me app ke liye
+## Later: mobile app
 
-Detection logic `motion.js` me alag hai, isliye same "level → energy → dismiss" pattern React Native / Flutter me port karna aasan hoga. Mobile par camera frame-diff ya accelerometer se yahi level banana hoga; `app.js` ki alarm/ringtone logic UI layer se replace kar sakte hain.
+The detection logic is isolated in `motion.js`, so the same "level → energy → dismiss" pattern can be ported to React Native / Flutter. On mobile, use camera frame-diff or an accelerometer to produce the same level; the alarm/ringtone logic in `app.js` can be replaced with the native UI layer.

@@ -183,7 +183,7 @@
     }
   }
 
-  /* Clap (sharp sound spike) ya voice (sustained sound) detect karta hai. */
+  /* Detects claps (sharp sound spikes) or voice (sustained sound). */
   class MicMonitor {
     constructor(kind) {
       this.kind = kind; // 'clap' | 'voice'
@@ -267,7 +267,7 @@
         }
         this.baseline = this.baseline * 0.9 + high * 0.1;
       } else {
-        // Voice band 80-400 Hz — ringtone notes (523 Hz+) ignore ho jate hain.
+        // Voice band 80-400 Hz — ringtone notes (523 Hz+) are ignored.
         const lowFrom = Math.max(0, Math.floor((80 / nyquist) * this.freqData.length));
         const lowTo = Math.min(this.freqData.length, Math.ceil((400 / nyquist) * this.freqData.length));
         let lowSum = 0;
@@ -300,7 +300,7 @@
     }
   }
 
-  /* "Hello" sunne ke liye Web Speech API. Support na ho to null deta hai. */
+  /* Web Speech API for listening to "hello". Returns false if unsupported. */
   class SpeechDetector {
     constructor() {
       this.recognition = null;
@@ -313,14 +313,14 @@
       const self = this;
       try {
         const rec = new SR();
-        rec.lang = 'hi-IN';
+        rec.lang = 'en-US';
         rec.continuous = true;
         rec.interimResults = true;
         rec.maxAlternatives = 3;
         rec.onresult = function (event) {
           for (let i = 0; i < event.results.length; i += 1) {
             const text = String(event.results[i][0].transcript || '').toLowerCase();
-            if (/hello|हेलो|हैलो|hellow|hallo/.test(text)) {
+            if (/hello|hellow|hallo/.test(text)) {
               onHeard(text);
               return;
             }
